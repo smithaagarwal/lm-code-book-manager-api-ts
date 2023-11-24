@@ -176,7 +176,7 @@ describe("DELETE /api/v1/books/{bookId} endpoint", () => {
 
 	test("controller returns message text stating book was not found", async () => {
 		// Arrange
-		jest.spyOn(bookService, "deleteBook").mockResolvedValue(1);
+		jest.spyOn(bookService, "deleteBook").mockResolvedValue(0);
 
 		// Act
 		const res = await request(app).delete("/api/v1/books/55");

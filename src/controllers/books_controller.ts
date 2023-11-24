@@ -39,11 +39,11 @@ export const updateBook = async (req: Request, res: Response) => {
 export const deleteBook = async (req: Request, res: Response) => {
 	const bookId = req.params.bookId;
 	const numOfBooksDeleted = await bookService.deleteBook(Number(bookId));
-	if (numOfBooksDeleted == 0)
-		res.send(`Book with id $(bookId) was not found`).status(404);
-	else {
+	if (numOfBooksDeleted == 0) {
+		res.status(404).send(`Book with id ${bookId} was not found`);
+	} else {
 		res
-			.send(`Book with id $(bookId) has been successfully deleted`)
-			.status(200);
+			.status(200)
+			.send(`Book with id ${bookId} has been successfully deleted`);
 	}
 };
