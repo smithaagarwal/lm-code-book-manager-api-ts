@@ -134,6 +134,8 @@ describe("POST /api/v1/books endpoint", () => {
 	});
 });
 
+//For the delete functionality on success a status code of 200 and a success message will be returned as response
+//On failure a status code of 404 and failure message will be returned as  response 
 describe("DELETE /api/v1/books/{bookId} endpoint", () => {
 	test("status code successfully 200 for a book that is deleted", async () => {
 		// Arrange
