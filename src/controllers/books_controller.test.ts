@@ -123,18 +123,21 @@ describe("GET /api/v1/books/{bookId} endpoint", () => {
 describe("POST /api/v1/books endpoint", () => {
 	test("status code successfully 201 for saving a valid book", async () => {
 		// Act
-		const res = await request(app)
-			.post("/api/v1/books")
-			.send({ bookId: 3, title: "Fantastic Mr. Fox", author: "Roald Dahl" });
+		const res = await request(app).post("/api/v1/books").send({
+			bookId: 3,
+			title: "Fantastic Mr. Fox",
+			author: "Roald Dahl",
+			description: "Book about fantastic fox",
+		});
 
 		// Assert
 		expect(res.statusCode).toEqual(201);
 	});
 
-	test("status code 400 when saving ill formatted JSON", async () => {
+	test("status code 400 and appropriate error message sent when saving ill formatted JSON", async () => {
 		// Arrange - we can enforce throwing an exception by mocking the implementation
 		jest.spyOn(bookService, "saveBook").mockImplementation(() => {
-			throw new Error("Error saving book");
+			throw { name: "SequelizeValidationError" };
 		});
 
 		// Act
@@ -144,6 +147,25 @@ describe("POST /api/v1/books endpoint", () => {
 
 		// Assert
 		expect(res.statusCode).toEqual(400);
+		expect(res.text).toEqual("Invalid book details");
+	});
+	test("status code 400 and appropriate error message sent when saving a book that already exists", async () => {
+		// Arrange - we can enforce throwing an exception by mocking the implementation
+		jest.spyOn(bookService, "saveBook").mockImplementation(() => {
+			throw { name: "SequelizeUniqueConstraintError" };
+		});
+
+		// Act
+		const res = await request(app).post("/api/v1/books").send({
+			bookId: 1,
+			title: "The Hobbit",
+			author: "J. R. R. Tolkien",
+			description: "Someone finds a nice piece of jewellery while on holiday.",
+		}); // Existing book
+
+		// Assert
+		expect(res.statusCode).toEqual(400);
+		expect(res.text).toEqual("The book already exists");
 	});
 });
 

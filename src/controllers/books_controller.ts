@@ -23,7 +23,12 @@ export const saveBook = async (req: Request, res: Response) => {
 		const book = await bookService.saveBook(bookToBeSaved);
 		res.status(201).json(book);
 	} catch (error) {
-		res.status(400).json({ message: (error as Error).message });
+		if ((error as Error).name === "SequelizeUniqueConstraintError"){
+			res.status(400).send("The book already exists");
+		}
+		else if ((error as Error).name === "SequelizeValidationError") {
+			res.status(400).send("Invalid book details");
+		}
 	}
 };
 
