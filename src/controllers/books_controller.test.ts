@@ -105,6 +105,19 @@ describe("GET /api/v1/books/{bookId} endpoint", () => {
 		// Assert
 		expect(res.body).toEqual(dummyBookData[1]);
 	});
+
+	test("controller returns message text stating book was not found", async () => {
+		// Arrange
+		jest
+			.spyOn(bookService, "getBook")
+			.mockResolvedValue(undefined as unknown as Book);
+
+		// Act
+		const res = await request(app).get("/api/v1/books/55");
+
+		// Assert
+		expect(res.text).toEqual("Book with id 55 was not found");
+	});
 });
 
 describe("POST /api/v1/books endpoint", () => {
@@ -135,7 +148,7 @@ describe("POST /api/v1/books endpoint", () => {
 });
 
 //For the delete functionality on success a status code of 200 and a success message will be returned as response
-//On failure a status code of 404 and failure message will be returned as  response 
+//On failure a status code of 404 and failure message will be returned as  response
 describe("DELETE /api/v1/books/{bookId} endpoint", () => {
 	test("status code successfully 200 for a book that is deleted", async () => {
 		// Arrange
